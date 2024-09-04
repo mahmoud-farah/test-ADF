@@ -1,0 +1,9 @@
+{
+	"name": "DEV-ADF-FM",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "3e16c82c-a201-4ac8-9c83-7af3591c5b52",
+		"tenantId": "71656a5c-7f34-4f43-bce8-c690fe205937"
+	}
+}
