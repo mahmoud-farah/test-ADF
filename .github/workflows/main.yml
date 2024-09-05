@@ -61,3 +61,22 @@ jobs:
         armTemplateFile: ARMTemplateForFactory.json
         armTemplateParametersFile: ARMTemplateParametersForFactory.json
         additionalParameters: "factoryName=PROD-ADF-FM"
+
+    - name: Checkout adf_publish branch
+      run: |
+        git fetch origin
+        git checkout -b adf_publish origin/adf_publish || git checkout -b adf_publish
+        git pull origin adf_publish || echo "No existing adf_publish branch"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Copy generated artifacts
+      run: cp -r ${{github.workspace}}/ADFroot/build/ExportedArmTemplate/* ${{github.workspace}}/
+
+    - name: Commit and push changes
+      run: |
+        git add .
+        git commit -m "Update adf_publish branch with latest artifacts"
+        git push origin adf_publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
