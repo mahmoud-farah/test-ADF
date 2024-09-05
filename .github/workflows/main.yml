@@ -20,7 +20,7 @@ jobs:
         
     - name: install ADF Utilities package
       run: npm install
-      working-directory: ${{github.workspace}}/ADFroot/build
+      working-directory: test-ADF/ADFroot/build
         
     - name: Validate
       run: npm run build validate "test-ADF/ADFroot/" "/subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/PROD-ADF-FM"
