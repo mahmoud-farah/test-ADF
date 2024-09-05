@@ -40,10 +40,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: main
-
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.2
       with:
@@ -65,33 +61,3 @@ jobs:
         armTemplateFile: ARMTemplateForFactory.json
         armTemplateParametersFile: ARMTemplateParametersForFactory.json
         additionalParameters: "factoryName=PROD-ADF-FM"
-
-    - name: Checkout or create adf_publish branch
-      run: |
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-        git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/mahmoud-farah/test-ADF.git
-        git fetch origin
-        if git show-ref --verify --quiet refs/remotes/origin/adf_publish; then
-          git checkout adf_publish
-          git pull origin adf_publish
-        else
-          git checkout -b adf_publish
-          git push origin adf_publish
-        fi
-      working-directory: ${{github.workspace}}
-      env:
-        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-
-    - name: Copy generated artifacts
-      run: cp -r ${{github.workspace}}/ADFroot/build/ExportedArmTemplate/* ${{github.workspace}}/
-      working-directory: ${{github.workspace}}
-
-    - name: Commit and push changes
-      run: |
-        git add .
-        git commit -m "Update adf_publish branch with latest artifacts"
-        git push origin adf_publish
-      working-directory: ${{github.workspace}}
-      env:
-        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
