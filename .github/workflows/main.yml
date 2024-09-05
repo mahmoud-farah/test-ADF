@@ -78,7 +78,7 @@ jobs:
         fi
       working-directory: ${{github.workspace}}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     - name: Copy generated artifacts
       run: cp -r ${{github.workspace}}/ADFroot/build/ExportedArmTemplate/* ${{github.workspace}}/
@@ -91,4 +91,4 @@ jobs:
         git push origin adf_publish
       working-directory: ${{github.workspace}}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
