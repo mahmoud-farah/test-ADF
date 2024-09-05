@@ -57,11 +57,25 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         enable-AzPSSession: true 
 
-    - name: Checkout adf_publish branch
+    - name: data-factory-deploy
+      uses: Azure/data-factory-deploy-action@v1.2.0
+      with:
+        resourceGroupName: test-reg
+        dataFactoryName: PROD-ADF-FM
+        armTemplateFile: ARMTemplateForFactory.json
+        armTemplateParametersFile: ARMTemplateParametersForFactory.json
+        additionalParameters: "factoryName=PROD-ADF-FM"
+
+    - name: Checkout or create adf_publish branch
       run: |
         git fetch origin
-        git checkout -b adf_publish origin/adf_publish || git checkout -b adf_publish
-        git pull origin adf_publish || echo "No existing adf_publish branch"
+        if git show-ref --verify --quiet refs/remotes/origin/adf_publish; then
+          git checkout adf_publish
+          git pull origin adf_publish
+        else
+          git checkout -b adf_publish
+          git push origin adf_publish
+        fi
       working-directory: ${{github.workspace}}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
