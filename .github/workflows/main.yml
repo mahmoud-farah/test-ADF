@@ -60,4 +60,4 @@ jobs:
         dataFactoryName: PROD-ADF-FM
         armTemplateFile: ARMTemplateForFactory.json
         armTemplateParametersFile: ARMTemplateParametersForFactory.json
-        additionalParameters: "dataFactoryName=PROD-ADF-FM"
+        additionalParameters: "factoryName=PROD-ADF-FM"
