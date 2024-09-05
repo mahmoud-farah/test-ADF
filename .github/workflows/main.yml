@@ -1,0 +1,72 @@
+on:
+  push:
+    branches:
+    - main
+
+permissions:
+      id-token: write
+      contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v3
+# Installs Node and the npm packages saved in your package.json file in the build
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.4.1
+      with:
+        node-version: 14.x
+        
+    - name: install ADF Utilities package
+      run: npm install
+      working-directory: test-ADF/ADFroot/build  # (1) provide the folder location of the package.json file
+        
+# Validates all of the Data Factory resources in the repository. You'll get the same validation errors as when "Validate All" is selected.
+    - name: Validate
+      run: npm run build validate test-ADF/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/PROD-ADF-FM # (2) The validate command needs the root folder location of your repository where all the objects are stored. And the 2nd parameter is the resourceID of the ADF instance 
+      working-directory: test-ADF/ADFroot/build
+ 
+
+    - name: Validate and Generate ARM template
+      run: npm run build export test-ADF/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/PROD-ADF-FM "ExportedArmTemplate"  # (3) The build command, as validate, needs the root folder location of your repository where all the objects are stored. And the 2nd parameter is the resourceID of the ADF instance. The 3rd parameter is the exported ARM template artifact name 
+      working-directory: test-ADF/ADFroot/build
+ 
+# In order to leverage the artifact in another job, we need to upload it with the upload action 
+    - name: upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ExportedArmTemplate # (4) use the same artifact name you used in the previous export step
+        path: test-ADF/ADFroot/build/ExportedArmTemplate# This is a basic workflow to help you get started with Actions
+
+release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    
+ # we 1st download the previously uploaded artifact so we can leverage it later in the release job     
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: ExportedArmTemplate # (5) Artifact name 
+
+
+      - name: Login via Az module
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true 
+
+      - name: data-factory-deploy
+        uses: Azure/data-factory-deploy-action@v1.2.0
+        with:
+          resourceGroupName: test-reg
+          dataFactoryName: PROD-ADF-FM
+          armTemplateFile: ARMTemplateForFactory.json
+          armTemplateParametersFile: ARMTemplateParametersForFactory.json
+          additionalParameters: "dataFactoryName=PROD-ADF-FM"
+         
+         
