@@ -64,15 +64,15 @@ jobs:
 
     - name: Terraform Init
       run: terraform init
-      working-directory: ${{github.workspace}}/terraform
+      working-directory: ${{github.workspace}}/test-ADF/terraform
 
     - name: Terraform Plan
       run: terraform plan -out=tfplan
-      working-directory: ${{github.workspace}}/terraform
+      working-directory: ${{github.workspace}}/test-ADF/terraform
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
-      working-directory: ${{github.workspace}}/terraform
+      working-directory: ${{github.workspace}}/test-ADF/terraform
 
     - name: data-factory-deploy
       uses: Azure/data-factory-deploy-action@v1.2.0
