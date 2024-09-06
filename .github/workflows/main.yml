@@ -29,7 +29,7 @@ jobs:
 
     - name: Validate and Generate ARM template
       run: npm run build export ${{github.workspace}}/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/DEV-ADF-FM "ExportedArmTemplate"
-      working-directory: ${{github.workspace}}/ADFroott/build
+      working-directory: ${{github.workspace}}/ADFroot/build
 
     - name: upload artifact
       uses: actions/upload-artifact@v3
