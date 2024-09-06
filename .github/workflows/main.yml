@@ -61,7 +61,9 @@ jobs:
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install terraform
-
+        
+    
+      
     - name: Terraform Init
       run: terraform init
       working-directory: ${{github.workspace}}/terraform
@@ -73,6 +75,7 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
       working-directory: ${{github.workspace}}/terraform
+
 
     - name: data-factory-deploy
       uses: Azure/data-factory-deploy-action@v1.2.0
