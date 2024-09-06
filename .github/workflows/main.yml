@@ -26,6 +26,7 @@ jobs:
       run: npm run build validate ${{github.workspace}}/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/DEV-ADF-FM
       working-directory: ${{github.workspace}}/ADFroot/build
 
+
     - name: Validate and Generate ARM template
       run: npm run build export ${{github.workspace}}/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/DEV-ADF-FM "ExportedArmTemplate"
       working-directory: ${{github.workspace}}/ADFroot/build
@@ -53,11 +54,31 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         enable-AzPSSession: true 
 
+    - name: Install Terraform
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gnupg software-properties-common curl
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update && sudo apt-get install terraform
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{github.workspace}}/terraform
+
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan
+      working-directory: ${{github.workspace}}/terraform
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan
+      working-directory: ${{github.workspace}}/terraform
+
     - name: data-factory-deploy
       uses: Azure/data-factory-deploy-action@v1.2.0
       with:
-        resourceGroupName: test-reg
-        dataFactoryName: PROD-ADF-FM
+        resourceGroupName: prod
+        dataFactoryName: prod_adf
         armTemplateFile: ARMTemplateForFactory.json
         armTemplateParametersFile: ARMTemplateParametersForFactory.json
-        additionalParameters: "factoryName=PROD-ADF-FM"
+        additionalParameters: "factoryName=prod_adf"
