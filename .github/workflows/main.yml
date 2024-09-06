@@ -1,9 +1,7 @@
-name: CI/CD Pipeline
-
 on:
   push:
     branches:
-      - main
+    - main
 
 permissions:
   id-token: write
@@ -13,53 +11,53 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.4.1
+      with:
+        node-version: 18.x
         
-      - name: install ADF Utilities package
-        run: npm install
-        working-directory: ${{github.workspace}}/ADFroot/build
+    - name: install ADF Utilities package
+      run: npm install
+      working-directory: ${{github.workspace}}/ADFroot/build
         
-      - name: Validate
-        run: npm run build validate ${{github.workspace}}/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/DEV-ADF-FM
-        working-directory: ${{github.workspace}}/ADFroot/build
+    - name: Validate
+      run: npm run build validate ${{github.workspace}}/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/DEV-ADF-FM
+      working-directory: ${{github.workspace}}/ADFroot/build
 
-      - name: Validate and Generate ARM template
-        run: npm run build export ${{github.workspace}}/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/DEV-ADF-FM "ExportedArmTemplate"
-        working-directory: ${{github.workspace}}/ADFroot/build
+    - name: Validate and Generate ARM template
+      run: npm run build export ${{github.workspace}}/ADFroot/ /subscriptions/d0267b2e-22f4-4ff1-9803-75190ac401a6/resourceGroups/test-reg/providers/Microsoft.DataFactory/factories/DEV-ADF-FM "ExportedArmTemplate"
+      working-directory: ${{github.workspace}}/ADFroot/build
 
-      - name: upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ExportedArmTemplate
-          path: ${{github.workspace}}/ADFroot/build/ExportedArmTemplate
+    - name: upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ExportedArmTemplate
+        path: ${{github.workspace}}/ADFroot/build/ExportedArmTemplate
 
   release:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: ExportedArmTemplate
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3.0.2
+      with:
+        name: ExportedArmTemplate
 
-      - name: Login via Az module
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          enable-AzPSSession: true 
+    - name: Login via Az module
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        enable-AzPSSession: true 
 
-      - name: data-factory-deploy
-        uses: Azure/data-factory-deploy-action@v1.2.0
-        with:
-          resourceGroupName: test-reg
-          dataFactoryName: PROD-ADF-FM
-          armTemplateFile: ARMTemplateForFactory.json
-          armTemplateParametersFile: ARMTemplateParametersForFactory.json
-          additionalParameters: "factoryName=PROD-ADF-FM"
+    - name: data-factory-deploy
+      uses: Azure/data-factory-deploy-action@v1.2.0
+      with:
+        resourceGroupName: test-reg
+        dataFactoryName: PROD-ADF-FM
+        armTemplateFile: ARMTemplateForFactory.json
+        armTemplateParametersFile: ARMTemplateParametersForFactory.json
+        additionalParameters: "factoryName=PROD-ADF-FM"
