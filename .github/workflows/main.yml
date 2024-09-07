@@ -62,19 +62,20 @@ jobs:
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install terraform
         
-    
+    - name: List Directory Contents
+      run: ls -al ./terraform
       
     - name: Terraform Init
       run: terraform init
-      working-directory: ${{github.workspace}}/terraform
+      working-directory: ./terraform
 
     - name: Terraform Plan
       run: terraform plan -out=tfplan
-      working-directory: ${{github.workspace}}/terraform
+      working-directory: ./terraform
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
-      working-directory: ${{github.workspace}}/terraform
+      working-directory: ./terraform
 
 
     - name: data-factory-deploy
