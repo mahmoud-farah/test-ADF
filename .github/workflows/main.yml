@@ -63,19 +63,19 @@ jobs:
         sudo apt-get update && sudo apt-get install terraform
         
     - name: List Directory Contents
-      run: ls -al ./terraform
+      run: ls -al ${{github.workspace}}/terraform
       
     - name: Terraform Init
       run: terraform init
-      working-directory: ./terraform
+      working-directory: ${{github.workspace}}/terraform
 
     - name: Terraform Plan
       run: terraform plan -out=tfplan
-      working-directory: ./terraform
+      working-directory: ${{github.workspace}}/terraform
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
-      working-directory: ./terraform
+      working-directory: ${{github.workspace}}/terraform
 
 
     - name: data-factory-deploy
