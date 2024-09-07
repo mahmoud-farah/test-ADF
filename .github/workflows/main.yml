@@ -41,6 +41,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.2
       with:
@@ -62,26 +64,18 @@ jobs:
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install terraform
         
-    - name: Print Working Directory
-      run: pwd
-
-    - name: List All Files
-      run: ls -alR ${{github.workspace}}
-        
-    - name: List Directory Contents
-      run: ls -al ${{github.workspace}}/test-ADF/terraform
       
     - name: Terraform Init
       run: terraform init
-      working-directory: ${{github.workspace}}/test-ADF/terraform
+      working-directory: ${{github.workspace}}/terraform
 
     - name: Terraform Plan
       run: terraform plan -out=tfplan
-      working-directory: ${{github.workspace}}/test-ADF/terraform
+      working-directory: ${{github.workspace}}/terraform
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
-      working-directory: ${{github.workspace}}/test-ADF/terraform
+      working-directory: ${{github.workspace}}/terraform
 
 
     - name: data-factory-deploy
