@@ -4,7 +4,7 @@ provider "azurerm" {
   client_id       = var.client_id
   tenant_id       = var.tenant_id
   use_msi         = true
-  msi_endpoint    = "http://169.254.169.254/metadata/identity/oauth2/token"
+  msi_client_id    = "ab978546-8235-452e-9239-414c360d126c"
 }
 
 resource "azurerm_resource_group" "prod" {
