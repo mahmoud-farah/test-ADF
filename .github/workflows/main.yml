@@ -70,10 +70,18 @@ jobs:
       working-directory: ${{github.workspace}}/terraform
 
     - name: Terraform Plan
+      env:
+        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       run: terraform plan -out=tfplan
       working-directory: ${{github.workspace}}/terraform
 
     - name: Terraform Apply
+      env:
+        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       run: terraform apply -auto-approve tfplan
       working-directory: ${{github.workspace}}/terraform
 
@@ -83,6 +91,6 @@ jobs:
       with:
         resourceGroupName: prod
         dataFactoryName: prod_adf
-        armTemplateFile: ARMTemplateForFactory.json
-        armTemplateParametersFile: ARMTemplateParametersForFactory.json
+        armTemplateFile: ./terraform/ARMTemplateForFactory.json
+        armTemplateParametersFile: ./terraform/ARMTemplateParametersForFactory.json
         additionalParameters: "factoryName=prod_adf"
