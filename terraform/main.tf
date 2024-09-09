@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "prod" {
 }
 
 resource "azurerm_data_factory" "prod_adf" {
-  name                = "prod-adf"
+  name                = "unique-prod-adf-name"
   location            = azurerm_resource_group.prod.location
   resource_group_name = azurerm_resource_group.prod.name
 }
