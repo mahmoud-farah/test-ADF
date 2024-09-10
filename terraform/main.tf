@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "prod" {
   location = "West Europe"  
 }
 
-resource "azurerm_data_factory" "prod_adf" {
+resource "azurerm_data_factory" "prod-adf" {
   name                = "unique-prod-adf-name"
   location            = azurerm_resource_group.prod.location
   resource_group_name = azurerm_resource_group.prod.name
