@@ -93,6 +93,6 @@ jobs:
       with:
         resourceGroupName: prod
         dataFactoryName: prod_adf
-        armTemplateFile: ./terraform/ARMTemplateForFactory.json
-        armTemplateParametersFile: ./terraform/ARMTemplateParametersForFactory.json
+        armTemplateFile: ARMTemplateForFactory.json
+        armTemplateParametersFile: ARMTemplateParametersForFactory.json
         additionalParameters: "factoryName=prod_adf"
