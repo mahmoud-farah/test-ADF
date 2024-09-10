@@ -92,7 +92,7 @@ jobs:
       uses: Azure/data-factory-deploy-action@v1.2.0
       with:
         resourceGroupName: prod
-        dataFactoryName: prod_adf
+        dataFactoryName: prod-adf 
         armTemplateFile: ARMTemplateForFactory.json
         armTemplateParametersFile: ARMTemplateParametersForFactory.json
         additionalParameters: "factoryName=prod_adf"
